@@ -3,9 +3,12 @@ package com.vlaryz.vismameetings.services;
 import com.vlaryz.vismameetings.interfaces.IMeetingRepository;
 import com.vlaryz.vismameetings.interfaces.IMeetingService;
 import com.vlaryz.vismameetings.models.Meeting;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class MeetingService implements IMeetingService {
 
     private IMeetingRepository meetingRepository;
@@ -16,7 +19,7 @@ public class MeetingService implements IMeetingService {
 
     @Override
     public int createMeeting(Meeting meeting) {
-        return 0;
+        return meetingRepository.addMeeting(meeting);
     }
 
     @Override
@@ -36,11 +39,11 @@ public class MeetingService implements IMeetingService {
 
     @Override
     public List<Meeting> listMeetings() {
-        return null;
+        return meetingRepository.getMeetings();
     }
 
     @Override
-    public List<Meeting> listMeetings(String property, String value) {
+    public List<Meeting> listMeetings(String filter, String value) {
         return null;
     }
 }

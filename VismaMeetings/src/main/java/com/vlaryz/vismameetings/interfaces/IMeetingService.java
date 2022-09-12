@@ -15,5 +15,5 @@ public interface IMeetingService {
 
     public List<Meeting> listMeetings();
 
-    public List<Meeting> listMeetings(String property, String value);
+    public List<Meeting> listMeetings(String filter, String value);
 }

@@ -1,6 +1,10 @@
 package com.vlaryz.vismameetings.models.enums;
 
-public enum Type {
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import java.io.Serializable;
+
+public enum Type implements Serializable {
     LIVE,
     IN_PERSON
 }
