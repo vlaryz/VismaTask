@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Repository
@@ -30,12 +31,18 @@ public class MeetingRepository implements IMeetingRepository {
 
     public MeetingRepository() {
         //this.meetingDatabase = "Meetings.json";
-        this.meetingDatabase = "Meetings.json";
+        this.meetingDatabase = "TestMeetings.json";
     }
 
     @Override
     public int addMeeting(Meeting meeting) {
         var meetings = getMeetings();
+
+        meeting.setId(meetings.stream()
+                .mapToInt(Meeting::getId)
+                .max()
+                .orElse(- 1) + 1);
+
         meetings.add(meeting);
 
         Gson gson = new Gson();
@@ -52,18 +59,47 @@ public class MeetingRepository implements IMeetingRepository {
     }
 
     @Override
-    public void deleteMeeting(int id) {
+    public void writeMeetings(List<Meeting> meetings) {
+        Gson gson = new Gson();
+        String json = gson.toJson(meetings);
 
+        try (FileWriter file = new FileWriter(meetingDatabase)) {
+            file.write(json);
+            file.flush();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void deleteMeeting(int id) {
+        var meetings = getMeetings();
+        if(meetings.stream().anyMatch(o -> o.getId() == id)) {
+            meetings.removeIf(x -> x.getId() == id);
+            writeMeetings(meetings);
+        }
     }
 
     @Override
     public void addPersonToMeeting(int id, Person person) {
-
+        var list = getMeetings();
+        list.stream()
+                .filter(obj->obj.getId() == id)
+                .peek(o -> o.getPersons().add(person))
+                .findFirst();
+        writeMeetings(list);
     }
 
     @Override
     public void removePersonFromMeeting(int id, int personId) {
-
+        var list = getMeetings();
+       list.stream()
+                .filter(obj->obj.getId() == id)
+                .peek(o -> o.getPersons()
+                        .removeIf(x -> x.getId() == personId && x.getId() != o.getResponsiblePerson().getId()))
+                .findFirst();
+        writeMeetings(list);
     }
 
     @Override

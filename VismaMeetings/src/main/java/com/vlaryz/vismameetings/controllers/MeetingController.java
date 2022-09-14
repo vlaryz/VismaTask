@@ -5,15 +5,9 @@ import com.vlaryz.vismameetings.models.Person;
 import com.vlaryz.vismameetings.models.enums.Category;
 import com.vlaryz.vismameetings.models.enums.Type;
 import com.vlaryz.vismameetings.services.MeetingService;
-import jdk.jfr.DataAmount;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -27,10 +21,18 @@ public class MeetingController {
         this.meetingService = service;
     }
 
+    @GetMapping("/")
+    public String index(Model model) {
+        model.addAttribute("aboba", "variable");
+        model.addAttribute("meetings", meetingService.listMeetings());
+        System.out.println("size: " + meetingService.listMeetings().size());
+        return "index";
+    }
+
     @PostMapping("/add")
     public void addMeeting() {
-        Person person = new Person(0, "Vladas");
-        var result = meetingService.createMeeting(new Meeting(0, person, Category.HUB, Type.LIVE, new Date(), new Date()));
+        Person person = new Person(0,"Vladas");
+        var result = meetingService.createMeeting(new Meeting(person, Category.HUB, Type.LIVE, new Date(), new Date()));
         System.out.println("result: " + result);
     }
 
@@ -39,6 +41,30 @@ public class MeetingController {
 
         var result = meetingService.listMeetings();
         System.out.println("result: listMeetings:");
+        return result;
+    }
+
+    @PostMapping("/delete")
+    public boolean deleteMeeting(@RequestParam("id") int id, @RequestParam("personId") int personId) {
+
+        var result = meetingService.deleteMeeting(id, personId);
+        System.out.println("result: deleteMeetings:");
+        return result;
+    }
+
+    @PostMapping("/addPerson")
+    public boolean addPersonToMeeting(@RequestParam("id") int id, @RequestParam("personId") int personId, @RequestParam("name") String name) {
+
+        var result = meetingService.addPersonToMeeting(id, personId, name);
+        System.out.println("result: addPersonToMeeting:");
+        return result;
+    }
+
+    @PostMapping("/removePerson")
+    public boolean removePersonFromMeeting(@RequestParam("id") int id, @RequestParam("personId") int personId) {
+
+        var result = meetingService.removePersonFromMeeting(id, personId);
+        System.out.println("result: removePersonToMeeting:");
         return result;
     }
 

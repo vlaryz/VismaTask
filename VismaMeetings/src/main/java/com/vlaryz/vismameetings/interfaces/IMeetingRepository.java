@@ -9,6 +9,8 @@ public interface IMeetingRepository {
 
     public int addMeeting(Meeting meeting);
 
+    public void writeMeetings(List<Meeting> meetings);
+
     public void deleteMeeting(int id);
 
     public void addPersonToMeeting(int id, Person person);
